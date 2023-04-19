@@ -3,26 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Student;
+use App\Models\Person;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\MockObject\Stub\ReturnReference;
 
-class StudentController extends Controller
+class PersonController extends Controller
 {
     public function index(): JsonResponse
     {
-        $students = Student::with('docType', 'enterprise', 'enterprise.bussinesLine')->get()->map(function ($student) {
-            return collect($student);
+        $people = Person::with('docType', 'enterprise', 'enterprise.bussinesLine')->get()->map(function ($person) {
+            return collect($person);
         });
 
-        return response()->json($students);
+        return response()->json($people);
     }
 
     public function findById($id): JsonResponse
     {
-        $student = Student::with('docType', 'enterprise')->find($id);
-        return response()->json($student);
+        $person = Person::with('docType', 'enterprise')->find($id);
+        return response()->json($person);
     }
 
     public function save(Request $request): JsonResponse
@@ -32,14 +31,15 @@ class StudentController extends Controller
             'lastName' => 'required|string',
             'emailAddress' => 'required|string',
             'docType_id' => 'required|integer',
+            'enterprise_id' => 'required|integer',
             'docNumber' => 'required|string',
             'phoneNumber' => 'required|string',
         ]);
 
-        $student = new Student($data);
-        $student->save();
+        $person = new Person($data);
+        $person->save();
 
-        $body = $student->attributesToArray();
+        $body = $person->attributesToArray();
 
         return response()->json($body);
     }
@@ -51,21 +51,22 @@ class StudentController extends Controller
             'lastName' => 'required|string',
             'emailAddress' => 'required|string',
             'docType_id' => 'required|integer',
+            'enterprise_id' => 'required|integer',
             'docNumber' => 'required|string',
             'phoneNumber' => 'required|string',
         ]);
 
-        $student = Student::find($id);
-        $student->update($data);
+        $person = Person::find($id);
+        $person->update($data);
 
-        $body = $student->attributesToArray();
+        $body = $person->attributesToArray();
 
         return response()->json($body);
     }
 
     public function delete($id)
     {
-        $student = Student::find($id);
-        $student->delete();
+        $person = Person::find($id);
+        $person->delete();
     }
 }

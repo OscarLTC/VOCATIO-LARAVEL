@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Student extends Model
+class Person extends Model
 {
     use HasFactory;
 
-    protected $table = 'student';
+    protected $table = 'person';
 
     protected $fillable = [
         'name', 'lastName', 'emailAddress',

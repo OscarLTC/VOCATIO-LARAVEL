@@ -13,8 +13,8 @@ class Enterprise extends Model
     protected $table = 'enterprise';
 
     protected $fillable = [
-        'name', 'contactName', 'phoneName',
-        'emailName', 'bussinesLine_id'
+        'name', 'contactName', 'phoneContact',
+        'emailContact', 'bussinesLine_id'
     ];
 
     protected $primaryKey = 'id';

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BussinesLineController;
 use App\Http\Controllers\DocTypeController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\PersonController;
 use App\Http\Controllers\StudentController;
 use App\Models\Enterprise;
 use Illuminate\Http\Request;
@@ -30,12 +31,12 @@ Route::get('doctype/all', [DocTypeController::class, 'index']);
 //BussinesLine
 Route::get('bussinesline/all', [BussinesLineController::class, 'index']);
 
-//Student
-Route::get('student/all', [StudentController::class, 'index']);
-Route::get('student/{id}', [StudentController::class, 'findById']);
-Route::post('student/save', [StudentController::class, 'save']);
-Route::put('student/{id}', [StudentController::class, 'update']);
-Route::delete('student/{id}', [StudentController::class, 'delete']);
+//Person
+Route::get('person/all', [PersonController::class, 'index']);
+Route::get('person/{id}', [PersonController::class, 'findById']);
+Route::post('person/save', [PersonController::class, 'save']);
+Route::put('person/{id}', [PersonController::class, 'update']);
+Route::delete('person/{id}', [PersonController::class, 'delete']);
 
 //Enterprise
 Route::get('enterprise/all', [EnterpriseController::class, 'index']);

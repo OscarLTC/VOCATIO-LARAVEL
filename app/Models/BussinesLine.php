@@ -12,7 +12,7 @@ class BussinesLine extends Model
 
     protected $table = 'bussines_line';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['description'];
 
     protected $primaryKey = 'id';
 
