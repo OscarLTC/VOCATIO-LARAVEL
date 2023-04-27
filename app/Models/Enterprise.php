@@ -23,7 +23,7 @@ class Enterprise extends Model
 
     public function bussinesLine(): BelongsTo
     {
-        return $this->belongsTo(bussinesLine::class, 'bussinesLine_id');
+        return $this->belongsTo(BussinesLine::class, 'bussinesLine_id');
     }
 
     public $timestamps = false;

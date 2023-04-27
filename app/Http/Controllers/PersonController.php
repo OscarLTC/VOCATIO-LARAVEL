@@ -18,6 +18,21 @@ class PersonController extends Controller
         return response()->json($people);
     }
 
+
+    public function search($data)
+    {
+        $people = Person::where('name', 'like', "%$data%")
+            ->orWhere('lastName', 'like', "%$data%")
+            ->orWhere('emailAddress', 'like', "%$data%")
+            ->orWhere('docNumber', 'like', "%$data%")
+            ->orWhere('phoneNumber', 'like', "%$data%")
+            ->with('docType', 'enterprise', 'enterprise.bussinesLine')->get()->map(function ($person) {
+                return collect($person);
+            });
+
+        return response()->json($people);
+    }
+
     public function findById($id): JsonResponse
     {
         $person = Person::with('docType', 'enterprise')->find($id);

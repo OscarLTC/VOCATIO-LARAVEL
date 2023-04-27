@@ -18,6 +18,19 @@ class EnterpriseController extends Controller
         return response()->json($enterprises);
     }
 
+    public function search($data)
+    {
+        $enterprises = Enterprise::where('name', 'like', "%$data%")
+            ->orWhere('contactName', 'like', "%$data%")
+            ->orWhere('phoneContact', 'like', "%$data%")
+            ->orWhere('emailContact', 'like', "%$data%")
+            ->with('bussinesLine')->get()->map(function ($person) {
+                return collect($person);
+            });
+
+        return response()->json($enterprises);
+    }
+
     public function findById($id): JsonResponse
     {
         $enterprise = Enterprise::with('bussinesLine')->find($id);
@@ -29,8 +42,8 @@ class EnterpriseController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'contactName' => 'required|string',
-            'phoneName' => 'required|string',
-            'emailName' => 'required|string',
+            'phoneContact' => 'required|string',
+            'emailContact' => 'required|string',
             'bussinesLine_id' => 'required|integer',
         ]);
 
@@ -47,8 +60,8 @@ class EnterpriseController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'contactName' => 'required|string',
-            'phoneName' => 'required|string',
-            'emailName' => 'required|string',
+            'phoneContact' => 'required|string',
+            'emailContact' => 'required|string',
             'bussinesLine_id' => 'required|integer',
         ]);
 
