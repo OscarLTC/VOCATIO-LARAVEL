@@ -4,7 +4,6 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\BussinesLineController;
 use App\Http\Controllers\DocTypeController;
 use App\Http\Controllers\EnterpriseController;
-use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ResultArchetypeController;
 use App\Http\Controllers\ResultController;
@@ -71,8 +70,9 @@ Route::put('surveyProgramming/{id}/cancel', [SurveyProgrammingController::class,
 Route::get('surveyProgrammingPerson/all', [SurveyProgrammingPersonController::class, 'index']);
 Route::get('surveyProgrammingPerson/totalSurveys', [SurveyProgrammingPersonController::class, 'totalSurveys']);
 Route::get('surveyProgrammingPerson/pdfLocal', [SurveyProgrammingPersonController::class, 'getPdf']);
-Route::put('surveyProgrammingPerson/pdf/{id}', [SurveyProgrammingPersonController::class, 'updatePdfBlob']);
-// Route::get('surveyProgrammingPerson/pdfDownload/{id}', [SurveyProgrammingPersonController::class, 'downloadPdfBlob']);
+
+Route::post('surveyProgrammingPerson/pdf/{id}', [SurveyProgrammingPersonController::class, 'updatePdfBlob']);
+Route::get('surveyProgrammingPerson/pdfDownload/{id}', [SurveyProgrammingPersonController::class, 'downloadPdfBlob']);
 Route::get('surveyProgrammingPerson/{id}', [SurveyProgrammingPersonController::class, 'findById']);
 // Route::put('surveyEnterprisePerson/result/{id}', [SurveyEnterprisePersonController::class, 'updateResult']);
 
@@ -81,10 +81,6 @@ Route::get('answers/all', [AnswerController::class, 'index']);
 Route::get('answers/last', [AnswerController::class, 'lastAnswers']);
 Route::get('answers/{id}', [AnswerController::class, 'findBySurveyPerson']);
 Route::post('answers/save', [AnswerController::class, 'createBySurvey']);
-
-//Genre
-Route::get('genre/all', [GenreController::class, 'index']);
-
 
 //Result
 Route::get('result/{id}', [ResultController::class, 'findById']);
