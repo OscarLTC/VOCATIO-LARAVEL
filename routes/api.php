@@ -57,6 +57,7 @@ Route::get('state/all', [StateController::class, 'index']);
 
 //SurveyProgramming
 Route::get('surveyProgramming/all', [SurveyProgrammingController::class, 'index']);
+Route::get('surveyProgramming/total', [SurveyProgrammingController::class, 'surveyAmountPerMonth']);
 Route::get('surveyProgramming/search/{data}', [SurveyProgrammingController::class, 'search']);
 Route::post('surveyProgramming/save', [SurveyProgrammingController::class, 'save']);
 Route::put('surveyProgramming/{id}', [SurveyProgrammingController::class, 'update']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\SurveyEnterprisePersonsExport;
+use App\Models\Survey;
 use App\Models\SurveyProgramming;
 use App\Models\SurveyProgrammingPerson;
 use Illuminate\Http\JsonResponse;
@@ -167,5 +168,74 @@ class SurveyProgrammingController extends Controller
         $surveyEnterprise->state_id = 4;
         $surveyEnterprise->save();
         return response()->json($surveyEnterprise);
+    }
+
+
+
+    // public function surveyAmountPerMonth()
+    // {
+    //     $startDate = date('Y') . '-01-01';
+
+    //     $surveys = SurveyProgramming::where('startDate', '>=', $startDate)->get();
+
+    //     $surveyIds = $surveys->pluck('survey_id')->unique()->filter();
+
+    //     $surveyData = Survey::whereIn('id', $surveyIds)->get();
+
+    //     $surveyNames = $surveyData->pluck('name', 'id');
+
+    //     $surveyCounts = [];
+
+    //     $months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    //     foreach ($surveyNames as $surveyId => $surveyName) {
+    //         $surveyCounts[$surveyName] = [];
+    //         foreach ($months as $month) {
+    //             $surveyCounts[$surveyName][$month] = 0;
+    //         }
+    //     }
+
+    //     foreach ($surveys as $survey) {
+    //         $month = strtolower(date('F', strtotime($survey->startDate)));
+    //         $surveyId = $survey->survey_id;
+
+    //         // Incrementar el contador para la encuesta y el mes correspondiente
+    //         if (isset($surveyNames[$surveyId])) {
+    //             $surveyName = $surveyNames[$surveyId];
+    //             $surveyCounts[$surveyName][$month]++;
+    //         }
+    //     }
+
+    //     return response()->json($surveyCounts);
+    // }
+
+    public function surveyAmountPerMonth()
+    {
+        $startDate = date('Y') . '-01-01';
+
+        $surveys = SurveyProgramming::where('startDate', '>=', $startDate)->get();
+
+        $surveyNames = Survey::pluck('name', 'id');
+        $months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+        $surveyCounts = [];
+
+        foreach ($surveyNames as $surveyId => $surveyName) {
+            $surveyCounts[$surveyName] = [];
+            foreach ($months as $month) {
+                $surveyCounts[$surveyName][$month] = 0;
+            }
+        }
+
+        foreach ($surveys as $survey) {
+            $month = strtolower(date('F', strtotime($survey->startDate)));
+            $surveyId = $survey->survey_id;
+
+            if (isset($surveyNames[$surveyId])) {
+                $surveyName = $surveyNames[$surveyId];
+                $surveyCounts[$surveyName][$month]++;
+            }
+        }
+
+        return response()->json($surveyCounts);
     }
 }
