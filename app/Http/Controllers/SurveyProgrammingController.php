@@ -8,6 +8,8 @@ use App\Models\SurveyProgramming;
 use App\Models\SurveyProgrammingPerson;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SurveyProgrammingController extends Controller
@@ -80,7 +82,6 @@ class SurveyProgrammingController extends Controller
         return response()->json($surveyProgramming);
     }
 
-
     public function findByEnterpriseId($id): JsonResponse
     {
         $surveyEnterprises = SurveyProgramming::where('enterprise_id', 'like', $id)->with('survey', 'enterprise', 'state', 'surveyProgrammingPerson', 'surveyProgrammingPerson.person', 'surveyProgrammingPerson.state')->get()->map(function ($surveyEnterprise) {
@@ -100,7 +101,6 @@ class SurveyProgrammingController extends Controller
 
         return Excel::download(new SurveyEnterprisePersonsExport($surveyEnterprisePersons, $domain), $docName . '.xlsx');
     }
-
 
     public function update(Request $request, $id): JsonResponse
     {
@@ -144,8 +144,6 @@ class SurveyProgrammingController extends Controller
         return response()->json($body);
     }
 
-
-
     public function delete($id)
     {
         $surveyProgramming = SurveyProgramming::find($id);
@@ -169,44 +167,6 @@ class SurveyProgrammingController extends Controller
         $surveyEnterprise->save();
         return response()->json($surveyEnterprise);
     }
-
-
-
-    // public function surveyAmountPerMonth()
-    // {
-    //     $startDate = date('Y') . '-01-01';
-
-    //     $surveys = SurveyProgramming::where('startDate', '>=', $startDate)->get();
-
-    //     $surveyIds = $surveys->pluck('survey_id')->unique()->filter();
-
-    //     $surveyData = Survey::whereIn('id', $surveyIds)->get();
-
-    //     $surveyNames = $surveyData->pluck('name', 'id');
-
-    //     $surveyCounts = [];
-
-    //     $months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-    //     foreach ($surveyNames as $surveyId => $surveyName) {
-    //         $surveyCounts[$surveyName] = [];
-    //         foreach ($months as $month) {
-    //             $surveyCounts[$surveyName][$month] = 0;
-    //         }
-    //     }
-
-    //     foreach ($surveys as $survey) {
-    //         $month = strtolower(date('F', strtotime($survey->startDate)));
-    //         $surveyId = $survey->survey_id;
-
-    //         // Incrementar el contador para la encuesta y el mes correspondiente
-    //         if (isset($surveyNames[$surveyId])) {
-    //             $surveyName = $surveyNames[$surveyId];
-    //             $surveyCounts[$surveyName][$month]++;
-    //         }
-    //     }
-
-    //     return response()->json($surveyCounts);
-    // }
 
     public function surveyAmountPerMonth()
     {
@@ -237,5 +197,62 @@ class SurveyProgrammingController extends Controller
         }
 
         return response()->json($surveyCounts);
+    }
+
+    public function exportZip($id)
+    {
+        $surveyProgramming = SurveyProgramming::find($id);
+        $surveyProgrammingPersons = $surveyProgramming->surveyProgrammingPerson;
+
+
+        $surveyProgrammingPersons->each(function ($surveyProgrammingPerson) {
+            $this->convertirBase64APDF($surveyProgrammingPerson->id, $surveyProgrammingPerson->surveyProgramming_id);
+        });
+
+        $carpeta = public_path('pdfs/' . $surveyProgramming->id);
+
+        $zip = new \ZipArchive();
+        $zipFileName = 'pdfs-' . $surveyProgramming->name . '_' . $surveyProgramming->survey->name . '.zip';
+        $zipFilePath = public_path($zipFileName);
+
+        if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
+            $files = File::files($carpeta);
+
+            foreach ($files as $file) {
+                $zip->addFile($file, $file->getFilename());
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zipFilePath)->deleteFileAfterSend(true);
+    }
+
+    public function convertirBase64APDF($id, $path)
+    {
+        $surveyProgrammingPerson = SurveyProgrammingPerson::find($id);
+        $surveyProgrammingName = $surveyProgrammingPerson->surveyProgramming->name;
+        $personName = $surveyProgrammingPerson->person->name . '_' . $surveyProgrammingPerson->person->lastName;
+        $surveyName = $surveyProgrammingPerson->surveyProgramming->survey->name;
+
+        $pdfBase64 = $surveyProgrammingPerson->pdfBlob;
+
+        if (!$pdfBase64) {
+            return response()->json(['error' => 'Documento no encontrado'], 404);
+        }
+
+        $base64_data = explode(',', $pdfBase64)[1];
+
+        $pdf_data = base64_decode($base64_data);
+
+        // Crear el directorio padre si no existe
+        $carpeta = public_path('pdfs/' . $surveyProgrammingPerson->surveyProgramming_id);
+        File::ensureDirectoryExists($carpeta);
+
+        $nombreArchivo = $surveyProgrammingName . '-' . $personName . '-' . $surveyName . '.pdf';
+
+        $rutaArchivo = $carpeta . '/' . $nombreArchivo;
+
+        file_put_contents($rutaArchivo, $pdf_data);
     }
 }

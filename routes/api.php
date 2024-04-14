@@ -63,6 +63,7 @@ Route::post('surveyProgramming/save', [SurveyProgrammingController::class, 'save
 Route::put('surveyProgramming/{id}', [SurveyProgrammingController::class, 'update']);
 Route::delete('surveyProgramming/{id}', [SurveyProgrammingController::class, 'delete']);
 Route::get('surveyProgramming/{id}', [SurveyProgrammingController::class, 'findById']);
+Route::get('surveyProgramming/zip/{id}', [SurveyProgrammingController::class, 'exportZip']);
 Route::get('surveyProgramming/enterprise/{id}', [SurveyProgrammingController::class, 'findByEnterpriseId']);
 Route::post('/surveyProgramming/{id}/export', [SurveyProgrammingController::class, 'exportById']);
 Route::put('surveyProgramming/{id}/cancel', [SurveyProgrammingController::class, 'cancelSurvey']);
