@@ -84,9 +84,10 @@ class SurveyProgrammingController extends Controller
 
     public function findByEnterpriseId($id): JsonResponse
     {
-        $surveyEnterprises = SurveyProgramming::where('enterprise_id', 'like', $id)->with('survey', 'enterprise', 'state', 'surveyProgrammingPerson', 'surveyProgrammingPerson.person', 'surveyProgrammingPerson.state')->get()->map(function ($surveyEnterprise) {
-            return collect($surveyEnterprise);
-        });
+        $surveyEnterprises = SurveyProgramming::where('enterprise_id', 'like', $id)
+            ->with('survey')
+            ->get();
+
         return response()->json($surveyEnterprises);
     }
 
